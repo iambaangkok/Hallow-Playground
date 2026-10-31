@@ -1,6 +1,6 @@
 import { isPlaygroundCode, LIMITS } from '../shared/protocol'
 import { h } from './dom'
-import { drawCharacter } from './draw'
+import { IDLE_BOB_RATE, WALK_BOB_RATE, drawCharacter } from './draw'
 import { createPlayground, listPublic, playgroundExists } from './net'
 import { saveProfile, type Profile } from './profile'
 import { ROSTER } from './roster'
@@ -52,7 +52,7 @@ export function showLobby(root: HTMLElement, initial: Profile, presetCode: strin
         const c = ROSTER.find((r) => r.id === card.dataset.id)!
         const picked = c.id === profile.character
         ctx.clearRect(0, 0, 120, 130)
-        drawCharacter(ctx, 60, 118, c.id, c, { moving: picked, phase: t * 9, facing: 1 }, 90)
+        drawCharacter(ctx, 60, 118, c.id, c, { moving: picked, phase: picked ? t * WALK_BOB_RATE : t * IDLE_BOB_RATE, facing: 1 }, 90)
       }
       raf = requestAnimationFrame(animate)
     }

@@ -105,3 +105,5 @@ input:focus { border-color: var(--orange); }
 .base-pick canvas { width: 52px; height: 52px; display: block; }
 .base-pick.picked { border-color: var(--orange); background: #2a2a2a; }
 .carve-canvas { height: min(92vw, 60dvh); width: min(92vw, 60dvh); }
+.place-btn { display: none; position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(max(12px, env(safe-area-inset-bottom)) + 60px); }
+.place-btn.show { display: block; }

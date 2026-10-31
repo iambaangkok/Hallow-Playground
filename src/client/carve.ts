@@ -1,4 +1,4 @@
-import type { Cut, Point } from '../shared/protocol'
+import type { Carving, Cut, Point } from '../shared/protocol'
 import { LIMITS } from '../shared/protocol'
 import { h } from './dom'
 import { DEFAULT_BASE, PUMPKIN_BASES, type PumpkinBaseId } from '../shared/pumpkins'
@@ -6,10 +6,8 @@ import { drawCarvedPumpkin, drawPumpkinBody, pumpkinBox } from './draw'
 
 const CLOSE_RADIUS_PX = 26
 
-export type Carved = { base: PumpkinBaseId; cuts: Cut[] }
-
 /** Pick a Pumpkin Base, then pen-tool carve: tap points, tap the first point again to cut. Null on cancel. */
-export function openCarver(root: HTMLElement): Promise<Carved | null> {
+export function openCarver(root: HTMLElement): Promise<Carving | null> {
   return new Promise((resolve) => {
     const cuts: Cut[] = []
     let pen: Point[] = []
@@ -18,7 +16,7 @@ export function openCarver(root: HTMLElement): Promise<Carved | null> {
 
     const canvas = h('canvas', { class: 'carve-canvas' })
     const hint = h('p', { class: 'hint' }, 'Tap to place points. Tap the first point again to cut.')
-    const done = (result: Carved | null) => {
+    const done = (result: Carving | null) => {
       cancelAnimationFrame(raf)
       panel.remove()
       resolve(result)
@@ -48,7 +46,7 @@ export function openCarver(root: HTMLElement): Promise<Carved | null> {
         h('button', { on: { click: undo } }, 'Undo'),
         h('button', { on: { click: () => ((pen = []), (cuts.length = 0)) } }, 'Clear'),
         h('button', { on: { click: () => done(null) } }, 'Cancel'),
-        h('button', { class: 'primary', on: { click: () => done({ base, cuts }) } }, 'Place it here'),
+        h('button', { class: 'primary', on: { click: () => done({ base, cuts }) } }, 'Done'),
       ),
     )
     root.append(panel)

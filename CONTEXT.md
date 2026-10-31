@@ -41,7 +41,7 @@ The display name a Player types when joining. There is no login yet; a browser r
 _Avoid_: username, handle
 
 **Bob**:
-How every Character moves: the whole drawing bounces as one piece and flips to face left or right. There is no limb animation.
+How every Character moves: the whole drawing bounces as one piece and flips to face left or right. Standing still, it Bobs slowly and slightly. There is no limb animation.
 _Avoid_: walk cycle, bubble
 
 **Tap-to-walk**:
@@ -72,6 +72,10 @@ _Avoid_: template, skin
 One closed, straight-edged hole carved into a Pumpkin with the pen tool.
 _Avoid_: stroke, line
 
+**Carving**:
+A Pumpkin Base plus its Cuts, as it comes out of the carver. A Player holds their Carving, visible to everyone, until they place it.
+_Avoid_: draft, held pumpkin
+
 **Pumpkin**:
-A carved Pumpkin Base placed on the Map. It stays in its Playground forever.
+A Carving placed on the Map, just in front of the Player who held it. It stays in its Playground forever.
 _Avoid_: jack-o'-lantern, decoration

@@ -6,6 +6,7 @@ import {
   WALK_SPEED,
   isPlaygroundCode,
   parseClientMsg,
+  type Carving,
   type PlayerView,
   type PublicPlayground,
   type Pumpkin,
@@ -28,10 +29,13 @@ function positionAt(w: Walk, now: number) {
   return stepToward({ x: w.fx, y: w.fy }, { x: w.tx, y: w.ty }, ((now - w.at) / 1000) * WALK_SPEED)
 }
 
-function view(s: Seat, now: number): PlayerView {
+function view(s: Seat, now: number, holding: Carving | null = null): PlayerView {
   const p = positionAt(s.walk, now)
-  return { id: s.id, name: s.name, character: s.character, x: p.x, y: p.y, tx: s.walk.tx, ty: s.walk.ty }
+  return { id: s.id, name: s.name, character: s.character, x: p.x, y: p.y, tx: s.walk.tx, ty: s.walk.ty, holding }
 }
+
+/** Held Carvings live in storage, not the socket attachment, which is capped at 2 KB. */
+const heldKey = (id: string) => `held:${id}`
 
 export class PlaygroundRoom extends DurableObject<Env> {
   async init(code: string, isPublic: boolean): Promise<void> {
@@ -100,7 +104,10 @@ export class PlaygroundRoom extends DurableObject<Env> {
         you: id,
         code: (await this.ctx.storage.get<string>('code')) ?? '',
         public: (await this.ctx.storage.get<boolean>('public')) ?? false,
-        players: [view(fresh, now), ...others.map((s) => view(s.seat, now))],
+        players: [
+          view(fresh, now),
+          ...(await Promise.all(others.map(async (s) => view(s.seat, now, (await this.ctx.storage.get<Carving>(heldKey(s.seat.id))) ?? null)))),
+        ],
         pumpkins: await this.pumpkins(),
       }
       ws.send(JSON.stringify(welcome))
@@ -127,12 +134,20 @@ export class PlaygroundRoom extends DurableObject<Env> {
         this.broadcast({ t: 'visibility', public: msg.public })
         await this.report()
         return
+      case 'hold':
+        await this.ctx.storage.put(heldKey(seat.id), msg.carving)
+        this.broadcast({ t: 'holding', id: seat.id, carving: msg.carving })
+        return
       case 'place': {
+        const held = await this.ctx.storage.get<Carving>(heldKey(seat.id))
+        if (!held) return
         const existing = await this.ctx.storage.list({ prefix: 'pumpkin:' })
         if (existing.size >= LIMITS.pumpkinsPerPlayground) return
         const spot = clampToMap(msg)
-        const pumpkin: Pumpkin = { id: `${now.toString(36)}${crypto.randomUUID().slice(0, 4)}`, base: msg.base, x: spot.x, y: spot.y, cuts: msg.cuts, by: seat.name, at: now }
+        const pumpkin: Pumpkin = { ...held, id: `${now.toString(36)}${crypto.randomUUID().slice(0, 4)}`, x: spot.x, y: spot.y, by: seat.name, at: now }
         await this.ctx.storage.put(`pumpkin:${pumpkin.id}`, pumpkin)
+        await this.ctx.storage.delete(heldKey(seat.id))
+        this.broadcast({ t: 'holding', id: seat.id, carving: null })
         this.broadcast({ t: 'placed', pumpkin })
         return
       }
@@ -153,7 +168,10 @@ export class PlaygroundRoom extends DurableObject<Env> {
     try {
       ws.close(1000, 'bye')
     } catch {}
-    if (seat) this.broadcast({ t: 'left', id: seat.id }, ws)
+    if (seat) {
+      await this.ctx.storage.delete(heldKey(seat.id))
+      this.broadcast({ t: 'left', id: seat.id }, ws)
+    }
     await this.report()
   }
 }

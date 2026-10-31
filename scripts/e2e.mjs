@@ -75,8 +75,21 @@ for (const [dx, dy] of [[-90, -40], [-40, -40], [-65, 0], [-90, -40]]) await a.m
 for (const [dx, dy] of [[40, -40], [90, -40], [65, 0], [40, -40]]) await a.mouse.click(cx + dx, cy + dy)
 for (const [dx, dy] of [[-90, 50], [90, 50], [0, 90], [-90, 50]]) await a.mouse.click(cx + dx, cy + dy)
 await a.screenshot({ path: `${OUT}-a-carve.png` })
-await a.click('text=Place it here')
+await a.click('.carve button:has-text("Done")')
+await b.waitForFunction(() => [...window.__hp.players.values()].some((p) => p.name === 'Baangkok' && p.holding))
+assert(true, 'tablet sees desktop holding the carved pumpkin')
+await a.waitForTimeout(300)
+await a.screenshot({ path: `${OUT}-a-holding.png` })
+const holder = await a.evaluate(() => {
+  const s = window.__hp
+  const m = s.players.get(s.me())
+  return { x: m.x, y: m.y, facing: m.pose.facing }
+})
+await a.click('.place-btn')
 await b.waitForFunction(() => window.__hp.pumpkins.length === 1)
+const spot = await b.evaluate(() => window.__hp.pumpkins[0])
+assert(Math.sign(spot.x - holder.x) === holder.facing && Math.abs(spot.y - holder.y) < 20, 'pumpkin placed in front of the holder')
+assert(!(await a.isVisible('.place-btn')), 'place button hides once hands are empty')
 const placed = await b.evaluate(() => window.__hp.pumpkins[0].cuts.length)
 assert(placed === 3, 'tablet sees the placed pumpkin with 3 cuts')
 assert((await b.evaluate(() => window.__hp.pumpkins[0].base)) === 'base-3', 'tablet sees the chosen Pumpkin Base')

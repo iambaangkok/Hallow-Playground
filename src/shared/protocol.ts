@@ -5,7 +5,10 @@ export type Point = { x: number; y: number }
 /** A Cut is a closed straight-edged polygon in pumpkin-local 0..1 coordinates. */
 export type Cut = Point[]
 
-export type Pumpkin = { id: string; base: PumpkinBaseId; x: number; y: number; cuts: Cut[]; by: string; at: number }
+/** What the carver produces: a Pumpkin Base plus its Cuts. A Player holds one until placing it. */
+export type Carving = { base: PumpkinBaseId; cuts: Cut[] }
+
+export type Pumpkin = Carving & { id: string; x: number; y: number; by: string; at: number }
 
 export type PlayerView = {
   id: string
@@ -15,6 +18,7 @@ export type PlayerView = {
   y: number
   tx: number
   ty: number
+  holding: Carving | null
 }
 
 export type ClientMsg =
@@ -22,7 +26,8 @@ export type ClientMsg =
   | { t: 'walk'; x: number; y: number }
   | { t: 'say'; text: string }
   | { t: 'visibility'; public: boolean }
-  | { t: 'place'; base: PumpkinBaseId; x: number; y: number; cuts: Cut[] }
+  | { t: 'hold'; carving: Carving }
+  | { t: 'place'; x: number; y: number }
 
 export type ServerMsg =
   | { t: 'welcome'; you: string; code: string; public: boolean; players: PlayerView[]; pumpkins: Pumpkin[] }
@@ -31,6 +36,7 @@ export type ServerMsg =
   | { t: 'walk'; id: string; x: number; y: number; tx: number; ty: number }
   | { t: 'say'; id: string; name: string; text: string }
   | { t: 'visibility'; public: boolean }
+  | { t: 'holding'; id: string; carving: Carving | null }
   | { t: 'placed'; pumpkin: Pumpkin }
 
 export type PublicPlayground = { code: string; players: number }
@@ -87,16 +93,19 @@ export function parseClientMsg(raw: unknown): ClientMsg | null {
     }
     case 'visibility':
       return typeof m.public === 'boolean' ? { t: 'visibility', public: m.public } : null
-    case 'place': {
-      if (!num(m.x) || !num(m.y) || !Array.isArray(m.cuts) || m.cuts.length > LIMITS.cutsPerPumpkin) return null
+    case 'hold': {
+      const c = m.carving
+      if (!c || !Array.isArray(c.cuts) || c.cuts.length > LIMITS.cutsPerPumpkin) return null
       const cuts: Cut[] = []
-      for (const c of m.cuts) {
-        const cut = parseCut(c)
+      for (const raw of c.cuts) {
+        const cut = parseCut(raw)
         if (!cut) return null
         cuts.push(cut)
       }
-      return { t: 'place', base: isPumpkinBase(m.base) ? m.base : DEFAULT_BASE, x: m.x, y: m.y, cuts }
+      return { t: 'hold', carving: { base: isPumpkinBase(c.base) ? c.base : DEFAULT_BASE, cuts } }
     }
+    case 'place':
+      return num(m.x) && num(m.y) ? { t: 'place', x: m.x, y: m.y } : null
     default:
       return null
   }

@@ -1,4 +1,4 @@
-import type { Cut } from '../shared/protocol'
+import type { Carving, Cut } from '../shared/protocol'
 import { DEFAULT_BASE, PUMPKIN_BASES, type PumpkinBaseId } from '../shared/pumpkins'
 import { MAP_H, MAP_W } from '../shared/world'
 import { spriteFor } from './roster'
@@ -71,13 +71,23 @@ export function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w
 
 export type Pose = { moving: boolean; phase: number; facing: 1 | -1 }
 
-/** Bob: the drawing bounces as one piece and flips to face its direction. */
+export const IDLE_BOB_RATE = 2.4
+export const WALK_BOB_RATE = 11
+
+/** Bob: the drawing bounces as one piece and flips to face its direction. Idle is a slow, small bounce. */
 export function bobOffset(pose: Pose): { lift: number; squash: number } {
   if (pose.moving) {
     const s = Math.abs(Math.sin(pose.phase))
     return { lift: s * 16, squash: 1 - (1 - s) * 0.08 }
   }
-  return { lift: 0, squash: 1 }
+  const s = (1 - Math.cos(pose.phase)) / 2
+  return { lift: s * 5, squash: 1 + (s - 0.5) * 0.03 }
+}
+
+/** A held Pumpkin rides in front of its holder and Bobs with them. */
+export function drawHeldPumpkin(ctx: CanvasRenderingContext2D, x: number, y: number, pose: Pose, carving: Carving, size = CHARACTER_H) {
+  const { lift } = bobOffset(pose)
+  drawCarvedPumpkin(ctx, x + pose.facing * size * 0.38, y - size * 0.3 - lift, size * 0.2, carving.cuts, carving.base)
 }
 
 export function drawCharacter(

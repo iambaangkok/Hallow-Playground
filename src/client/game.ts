@@ -4,7 +4,7 @@ import { DEFAULT_BASE } from '../shared/pumpkins'
 import { MAP_H, MAP_W, clampToMap, stepToward } from '../shared/world'
 import { openCarver } from './carve'
 import { h } from './dom'
-import { CHARACTER_H, drawBubble, drawCarvedPumpkin, drawCharacter, drawLabel, drawMap, type Pose } from './draw'
+import { CHARACTER_H, IDLE_BOB_RATE, WALK_BOB_RATE, drawBubble, drawCarvedPumpkin, drawCharacter, drawHeldPumpkin, drawLabel, drawMap, type Pose } from './draw'
 import { connect, type Connection } from './net'
 import { NPCS, type Npc } from './npcs'
 import type { Profile } from './profile'
@@ -18,12 +18,13 @@ const BUBBLE_MS = 6000
 const LOG_FADE_MS = 15000
 const NPC_REACH = 130
 const PUMPKIN_R = 26
+const PLACE_AHEAD = 70
 
 export function startGame(root: HTMLElement, canvas: HTMLCanvasElement, profile: Profile, code: string) {
   const ctx = canvas.getContext('2d')!
   const players = new Map<string, Player>()
   const pumpkins: Pumpkin[] = []
-  const npcs: NpcState[] = NPCS.map((n) => ({ ...n, pose: { moving: false, phase: 0, facing: n.x > MAP_W / 2 ? -1 : 1 } }))
+  const npcs: NpcState[] = NPCS.map((n) => ({ ...n, pose: { moving: false, phase: Math.random() * Math.PI * 2, facing: n.x > MAP_W / 2 ? -1 : 1 } }))
   let me = ''
   let isPublic = false
   let pendingNpc: NpcState | null = null
@@ -63,7 +64,20 @@ export function startGame(root: HTMLElement, canvas: HTMLCanvasElement, profile:
   })
   const sayBar = h('div', { class: 'say-bar' }, sayInput, h('button', { class: 'primary', on: { click: say } }, 'Say'))
 
-  ui.append(log, h('div', { class: 'top-right' }, statusBadge, codeBadge), sayBar)
+  const placeBtn = h('button', {
+    class: 'primary place-btn',
+    on: {
+      click: () => {
+        const mine = players.get(me)
+        if (!mine?.holding) return
+        const spot = clampToMap({ x: mine.x + mine.pose.facing * PLACE_AHEAD, y: mine.y + 8 })
+        conn.send({ t: 'place', x: spot.x, y: spot.y })
+      },
+    },
+  }, 'Place it here')
+  const renderPlaceBtn = () => placeBtn.classList.toggle('show', !!players.get(me)?.holding)
+
+  ui.append(log, h('div', { class: 'top-right' }, statusBadge, codeBadge), placeBtn, sayBar)
 
   const shareUrl = () => `${location.origin}${import.meta.env.BASE_URL}${code}`
 
@@ -137,10 +151,9 @@ export function startGame(root: HTMLElement, canvas: HTMLCanvasElement, profile:
               click: async () => {
                 close()
                 modalOpen = true
-                const carved = await openCarver(root)
+                const carving = await openCarver(root)
                 modalOpen = false
-                const mine = players.get(me)
-                if (carved && mine) conn.send({ t: 'place', base: carved.base, cuts: carved.cuts, x: mine.x, y: mine.y + 30 })
+                if (carving) conn.send({ t: 'hold', carving })
               },
             },
           }, 'Carve a pumpkin'),
@@ -162,6 +175,7 @@ export function startGame(root: HTMLElement, canvas: HTMLCanvasElement, profile:
         pumpkins.splice(0, pumpkins.length, ...m.pumpkins)
         const mine = players.get(me)
         if (mine) Object.assign(cam, { x: mine.x, y: mine.y })
+        renderPlaceBtn()
         addLog('', `You are in playground ${m.code}. Tap the ground to walk.`, 'info')
         return
       }
@@ -193,6 +207,12 @@ export function startGame(root: HTMLElement, canvas: HTMLCanvasElement, profile:
         renderBadge()
         addLog('', `This playground is now ${m.public ? 'public' : 'private'}.`, 'info')
         return
+      case 'holding': {
+        const p = players.get(m.id)
+        if (p) p.holding = m.carving
+        renderPlaceBtn()
+        return
+      }
       case 'placed':
         pumpkins.push(m.pumpkin)
         addLog('', `${m.pumpkin.by} placed a carved pumpkin.`, 'info')
@@ -250,6 +270,7 @@ export function startGame(root: HTMLElement, canvas: HTMLCanvasElement, profile:
     last = now
 
     for (const p of players.values()) advance(p, dt)
+    for (const n of npcs) n.pose.phase += dt * IDLE_BOB_RATE
     const mine = players.get(me)
     if (mine && pendingNpc && Math.hypot(mine.x - pendingNpc.x, mine.y - pendingNpc.y) < NPC_REACH && !mine.pose.moving) {
       const npc = pendingNpc
@@ -296,6 +317,7 @@ export function startGame(root: HTMLElement, canvas: HTMLCanvasElement, profile:
         y: p.y,
         draw: () => {
           drawCharacter(ctx, p.x, p.y, p.character, characterDef(p.character), p.pose)
+          if (p.holding) drawHeldPumpkin(ctx, p.x, p.y, p.pose, p.holding)
         },
       })
     scene.sort((a, b) => a.y - b.y).forEach((d) => d.draw())
@@ -334,7 +356,8 @@ function advance(b: Body, dt: number) {
     const next = stepToward(b, { x: b.tx, y: b.ty }, WALK_SPEED * dt)
     b.x = next.x
     b.y = next.y
-    b.pose.phase += dt * 11
+    b.pose.phase += dt * WALK_BOB_RATE
   } else if (b.pose.moving) b.pose.phase = 0
+  else b.pose.phase += dt * IDLE_BOB_RATE
   b.pose.moving = moving
 }
