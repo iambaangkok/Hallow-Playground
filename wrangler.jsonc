@@ -2,6 +2,8 @@
   // Worker script + static assets, on route iambaangkok.dev/hallow-playground*.
   // The route keeps the path prefix, so Vite `base` is /hallow-playground/ and the build lands in
   // dist/hallow-playground/ while assets serve from dist/. Change one, change the other.
+  // The build also copies index.html to dist/ root: SPA fallback serves /index.html, which is how
+  // invite links like /hallow-playground/ABCDE reach the app.
   // `name` must match the Worker name in the Cloudflare dashboard.
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "hallow-playground",
