@@ -77,7 +77,7 @@ export function parseClientMsg(raw: unknown): ClientMsg | null {
   switch (m.t) {
     case 'join':
       if (!str(m.name) || !str(m.character)) return null
-      return { t: 'join', name: m.name.trim().slice(0, LIMITS.name) || 'Ghost', character: m.character.slice(0, 32) }
+      return { t: 'join', name: m.name.trim().slice(0, LIMITS.name) || 'Player', character: m.character.slice(0, 32) }
     case 'walk':
       return num(m.x) && num(m.y) ? { t: 'walk', x: m.x, y: m.y } : null
     case 'say': {
