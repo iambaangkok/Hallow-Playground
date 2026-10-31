@@ -1,9 +1,11 @@
+import { DEFAULT_BASE, isPumpkinBase, type PumpkinBaseId } from './pumpkins'
+
 export type Point = { x: number; y: number }
 
 /** A Cut is a closed straight-edged polygon in pumpkin-local 0..1 coordinates. */
 export type Cut = Point[]
 
-export type Pumpkin = { id: string; x: number; y: number; cuts: Cut[]; by: string; at: number }
+export type Pumpkin = { id: string; base: PumpkinBaseId; x: number; y: number; cuts: Cut[]; by: string; at: number }
 
 export type PlayerView = {
   id: string
@@ -20,7 +22,7 @@ export type ClientMsg =
   | { t: 'walk'; x: number; y: number }
   | { t: 'say'; text: string }
   | { t: 'visibility'; public: boolean }
-  | { t: 'place'; x: number; y: number; cuts: Cut[] }
+  | { t: 'place'; base: PumpkinBaseId; x: number; y: number; cuts: Cut[] }
 
 export type ServerMsg =
   | { t: 'welcome'; you: string; code: string; public: boolean; players: PlayerView[]; pumpkins: Pumpkin[] }
@@ -93,7 +95,7 @@ export function parseClientMsg(raw: unknown): ClientMsg | null {
         if (!cut) return null
         cuts.push(cut)
       }
-      return { t: 'place', x: m.x, y: m.y, cuts }
+      return { t: 'place', base: isPumpkinBase(m.base) ? m.base : DEFAULT_BASE, x: m.x, y: m.y, cuts }
     }
     default:
       return null

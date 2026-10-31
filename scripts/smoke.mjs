@@ -53,7 +53,7 @@ assert(walk.id === wb.you, 'walk relayed')
 a.send({ t: 'say', text: 'boo' })
 assert((await b.next((m) => m.t === 'say')).text === 'boo', 'say relayed')
 
-a.send({ t: 'place', x: 900, y: 900, cuts: [[{ x: 0.3, y: 0.3 }, { x: 0.4, y: 0.3 }, { x: 0.35, y: 0.4 }]] })
+a.send({ t: 'place', base: 'tall', x: 900, y: 900, cuts: [[{ x: 0.3, y: 0.3 }, { x: 0.4, y: 0.3 }, { x: 0.35, y: 0.4 }]] })
 assert((await b.next((m) => m.t === 'placed')).pumpkin.cuts.length === 1, 'pumpkin placed and relayed')
 
 b.ws.close()

@@ -27,4 +27,4 @@ Worker script plus static assets on route `www.iambaangkok.dev/hallow-playground
 
 ## Art
 
-Drop PNGs in `public/`: `characters/<id>.png` for each Roster id in `src/client/roster.ts`, `characters/npc-<id>.png` for NPCs, `map.png` (2400x1600), `pumpkin.png`. Missing files fall back to placeholders.
+Drop PNGs in `public/`: `characters/<id>.png` for each Roster id in `src/client/roster.ts`, `characters/npc-<id>.png` for NPCs, `map.png` (2400x1600), `pumpkins/<id>.png` for each Pumpkin Base in `src/shared/pumpkins.ts`. Missing files fall back to placeholders.

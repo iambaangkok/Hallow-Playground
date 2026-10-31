@@ -100,3 +100,8 @@ input:focus { border-color: var(--orange); }
 .carve h2 { margin: 0; color: var(--orange); }
 .carve-canvas { width: min(92vw, 70dvh); height: min(92vw, 70dvh); touch-action: none; }
 .hint { margin: 0; color: var(--muted); text-align: center; }
+.bases { justify-content: center; }
+.base-pick { padding: 4px; background: #21163a; }
+.base-pick canvas { width: 52px; height: 52px; display: block; }
+.base-pick.picked { border-color: var(--orange); background: #3a2350; }
+.carve-canvas { height: min(92vw, 60dvh); width: min(92vw, 60dvh); }

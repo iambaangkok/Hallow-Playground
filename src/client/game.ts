@@ -1,5 +1,6 @@
 import type { PlayerView, Pumpkin, ServerMsg } from '../shared/protocol'
 import { LIMITS, WALK_SPEED } from '../shared/protocol'
+import { DEFAULT_BASE } from '../shared/pumpkins'
 import { MAP_H, MAP_W, clampToMap, stepToward } from '../shared/world'
 import { openCarver } from './carve'
 import { h } from './dom'
@@ -136,10 +137,10 @@ export function startGame(root: HTMLElement, canvas: HTMLCanvasElement, profile:
               click: async () => {
                 close()
                 modalOpen = true
-                const cuts = await openCarver(root)
+                const carved = await openCarver(root)
                 modalOpen = false
                 const mine = players.get(me)
-                if (cuts && mine) conn.send({ t: 'place', x: mine.x, y: mine.y + 30, cuts })
+                if (carved && mine) conn.send({ t: 'place', base: carved.base, cuts: carved.cuts, x: mine.x, y: mine.y + 30 })
               },
             },
           }, 'Carve a pumpkin'),
@@ -283,7 +284,7 @@ export function startGame(root: HTMLElement, canvas: HTMLCanvasElement, profile:
 
     type Drawable = { y: number; draw: () => void }
     const scene: Drawable[] = []
-    for (const pk of pumpkins) scene.push({ y: pk.y, draw: () => drawCarvedPumpkin(ctx, pk.x, pk.y - PUMPKIN_R * 0.85, PUMPKIN_R, pk.cuts, t) })
+    for (const pk of pumpkins) scene.push({ y: pk.y, draw: () => drawCarvedPumpkin(ctx, pk.x, pk.y - PUMPKIN_R * 0.85, PUMPKIN_R, pk.cuts, t, pk.base ?? DEFAULT_BASE) })
     for (const n of npcs)
       scene.push({
         y: n.y,

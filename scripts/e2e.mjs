@@ -67,6 +67,7 @@ await a.waitForSelector('.npc-line', { timeout: 8000 })
 assert(true, 'walked to Old Gourd and dialogue opened')
 while (await a.isVisible('.dialog button:has-text("Next")')) await a.click('.dialog button:has-text("Next")')
 await a.click('text=Carve a pumpkin')
+await a.click('.base-pick[data-id="ghost"]')
 const box = await a.locator('.carve-canvas').boundingBox()
 const cx = box.x + box.width / 2
 const cy = box.y + box.height / 2
@@ -78,6 +79,7 @@ await a.click('text=Place it here')
 await b.waitForFunction(() => window.__hp.pumpkins.length === 1)
 const placed = await b.evaluate(() => window.__hp.pumpkins[0].cuts.length)
 assert(placed === 3, 'tablet sees the placed pumpkin with 3 cuts')
+assert((await b.evaluate(() => window.__hp.pumpkins[0].base)) === 'ghost', 'tablet sees the chosen Pumpkin Base')
 
 const pk = await b.evaluate(() => window.__hp.pumpkins[0])
 const pt = await toScreen(b, pk.x - 120, pk.y + 40)

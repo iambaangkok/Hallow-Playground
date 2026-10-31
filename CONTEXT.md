@@ -63,3 +63,15 @@ _Avoid_: message, post
 **Chat log**:
 The record of recent Says in the Playground, drawn semi-transparent in the top-left corner. It fades on its own and can be collapsed.
 _Avoid_: chat window, history
+
+**Pumpkin Base**:
+One of the uncarved pumpkin drawings that ship with the game. A Player picks one before carving; Players never upload their own.
+_Avoid_: template, skin
+
+**Cut**:
+One closed, straight-edged hole carved into a Pumpkin with the pen tool.
+_Avoid_: stroke, line
+
+**Pumpkin**:
+A carved Pumpkin Base placed on the Map. It stays in its Playground forever.
+_Avoid_: jack-o'-lantern, decoration

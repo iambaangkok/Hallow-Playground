@@ -1,4 +1,5 @@
 import type { Cut } from '../shared/protocol'
+import { DEFAULT_BASE, PUMPKIN_BASES, type PumpkinBaseId } from '../shared/pumpkins'
 import { MAP_H, MAP_W } from '../shared/world'
 import { spriteFor } from './roster'
 
@@ -270,44 +271,50 @@ function wrap(ctx: CanvasRenderingContext2D, text: string, max: number): string[
   return out.slice(0, 5)
 }
 
-let pumpkinImage: HTMLImageElement | null = null
-{
+const baseImages = new Map<PumpkinBaseId, HTMLImageElement>()
+for (const b of PUMPKIN_BASES) {
   const img = new Image()
-  img.onload = () => (pumpkinImage = img)
-  img.src = `${import.meta.env.BASE_URL}pumpkin.png`
+  img.onload = () => baseImages.set(b.id, img)
+  img.src = `${import.meta.env.BASE_URL}pumpkins/${b.id}.png`
 }
 
-/** The rectangle Cuts are measured in: the pumpkin drawing's bounds, or the placeholder's. */
-export function pumpkinBox(x: number, y: number, r: number) {
+const baseDef = (id: PumpkinBaseId) => PUMPKIN_BASES.find((b) => b.id === id) ?? PUMPKIN_BASES[0]
+
+/** The rectangle Cuts are measured in: the base drawing's bounds, or the placeholder's. */
+export function pumpkinBox(x: number, y: number, r: number, base: PumpkinBaseId) {
+  const img = baseImages.get(base)
   const w = r * 2.1
-  const h = pumpkinImage ? (w * pumpkinImage.height) / pumpkinImage.width : r * 1.7
+  const h = img ? (w * img.height) / img.width : w * baseDef(base).aspect
   return { left: x - w / 2, top: y - h / 2, w, h }
 }
 
-export function drawPumpkinBody(ctx: CanvasRenderingContext2D, x: number, y: number, r: number) {
-  if (pumpkinImage) {
-    const b = pumpkinBox(x, y, r)
-    ctx.drawImage(pumpkinImage, b.left, b.top, b.w, b.h)
+export function drawPumpkinBody(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, base: PumpkinBaseId = DEFAULT_BASE) {
+  const b = pumpkinBox(x, y, r, base)
+  const img = baseImages.get(base)
+  if (img) {
+    ctx.drawImage(img, b.left, b.top, b.w, b.h)
     return
   }
+  const def = baseDef(base)
+  const ry = b.h / 2
   ctx.save()
   ctx.fillStyle = '#5a3a12'
-  ctx.fillRect(x - r * 0.1, y - r * 1.05, r * 0.2, r * 0.35)
+  ctx.fillRect(x - r * 0.1, b.top - r * 0.2, r * 0.2, r * 0.35)
   for (const [dx, sx, shade] of [
-    [-0.45, 0.6, '#d9661a'],
-    [0.45, 0.6, '#d9661a'],
-    [0, 0.62, '#ff8a1f'],
+    [-0.45, 0.6, def.side],
+    [0.45, 0.6, def.side],
+    [0, 0.62, def.mid],
   ] as const) {
     ctx.fillStyle = shade
     ctx.beginPath()
-    ctx.ellipse(x + dx * r, y, r * sx, r * 0.85, 0, 0, Math.PI * 2)
+    ctx.ellipse(x + dx * r, y, r * sx, ry, 0, 0, Math.PI * 2)
     ctx.fill()
   }
   ctx.restore()
 }
 
 /** A carved Pumpkin: body plus each Cut filled with candle light. Cuts are 0..1 across the pumpkin's box. */
-export function drawCarvedPumpkin(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, cuts: Cut[], t: number) {
+export function drawCarvedPumpkin(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, cuts: Cut[], t: number, base: PumpkinBaseId) {
   const flicker = 0.85 + 0.15 * Math.sin(t * 9 + x) * Math.sin(t * 5.3 + y)
   ctx.save()
   if (cuts.length) {
@@ -317,8 +324,8 @@ export function drawCarvedPumpkin(ctx: CanvasRenderingContext2D, x: number, y: n
     ctx.fillStyle = halo
     ctx.fillRect(x - r * 2.4, y - r * 2.4, r * 4.8, r * 4.8)
   }
-  drawPumpkinBody(ctx, x, y, r)
-  const { left, top, w, h } = pumpkinBox(x, y, r)
+  drawPumpkinBody(ctx, x, y, r, base)
+  const { left, top, w, h } = pumpkinBox(x, y, r, base)
   const glow = ctx.createRadialGradient(x, y, 0, x, y, r)
   glow.addColorStop(0, `rgba(255, 245, 170, ${flicker})`)
   glow.addColorStop(1, `rgba(255, 150, 30, ${flicker})`)

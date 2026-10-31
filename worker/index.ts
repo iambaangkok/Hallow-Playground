@@ -131,7 +131,7 @@ export class PlaygroundRoom extends DurableObject<Env> {
         const existing = await this.ctx.storage.list({ prefix: 'pumpkin:' })
         if (existing.size >= LIMITS.pumpkinsPerPlayground) return
         const spot = clampToMap(msg)
-        const pumpkin: Pumpkin = { id: `${now.toString(36)}${crypto.randomUUID().slice(0, 4)}`, x: spot.x, y: spot.y, cuts: msg.cuts, by: seat.name, at: now }
+        const pumpkin: Pumpkin = { id: `${now.toString(36)}${crypto.randomUUID().slice(0, 4)}`, base: msg.base, x: spot.x, y: spot.y, cuts: msg.cuts, by: seat.name, at: now }
         await this.ctx.storage.put(`pumpkin:${pumpkin.id}`, pumpkin)
         this.broadcast({ t: 'placed', pumpkin })
         return

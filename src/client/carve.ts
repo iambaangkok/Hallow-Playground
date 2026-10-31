@@ -1,29 +1,45 @@
 import type { Cut, Point } from '../shared/protocol'
 import { LIMITS } from '../shared/protocol'
 import { h } from './dom'
-import { drawCarvedPumpkin, pumpkinBox } from './draw'
+import { DEFAULT_BASE, PUMPKIN_BASES, type PumpkinBaseId } from '../shared/pumpkins'
+import { drawCarvedPumpkin, drawPumpkinBody, pumpkinBox } from './draw'
 
 const CLOSE_RADIUS_PX = 26
 
-/** Pen-tool carving: tap points, tap the first point again to cut. Resolves with the Cuts, or null on cancel. */
-export function openCarver(root: HTMLElement): Promise<Cut[] | null> {
+export type Carved = { base: PumpkinBaseId; cuts: Cut[] }
+
+/** Pick a Pumpkin Base, then pen-tool carve: tap points, tap the first point again to cut. Null on cancel. */
+export function openCarver(root: HTMLElement): Promise<Carved | null> {
   return new Promise((resolve) => {
     const cuts: Cut[] = []
     let pen: Point[] = []
     let raf = 0
+    let base: PumpkinBaseId = DEFAULT_BASE
 
     const canvas = h('canvas', { class: 'carve-canvas' })
     const hint = h('p', { class: 'hint' }, 'Tap to place points. Tap the first point again to cut.')
-    const done = (result: Cut[] | null) => {
+    const done = (result: Carved | null) => {
       cancelAnimationFrame(raf)
       panel.remove()
       resolve(result)
     }
     const undo = () => (pen.length ? pen.pop() : cuts.pop())
+    const picks = PUMPKIN_BASES.map((b) => {
+      const thumb = h('canvas', { width: 64, height: 64 })
+      const btn = h('button', { class: 'base-pick', title: b.label, on: { click: () => choose(b.id) } }, thumb)
+      btn.dataset.id = b.id
+      return btn
+    })
+    const choose = (id: PumpkinBaseId) => {
+      base = id
+      for (const p of picks) p.classList.toggle('picked', p.dataset.id === id)
+    }
+    choose(base)
     const panel = h(
       'div',
       { class: 'overlay carve' },
       h('h2', {}, 'Carve your pumpkin'),
+      h('div', { class: 'row bases' }, ...picks),
       canvas,
       hint,
       h(
@@ -32,7 +48,7 @@ export function openCarver(root: HTMLElement): Promise<Cut[] | null> {
         h('button', { on: { click: undo } }, 'Undo'),
         h('button', { on: { click: () => ((pen = []), (cuts.length = 0)) } }, 'Clear'),
         h('button', { on: { click: () => done(null) } }, 'Cancel'),
-        h('button', { class: 'primary', on: { click: () => done(cuts) } }, 'Place it here'),
+        h('button', { class: 'primary', on: { click: () => done({ base, cuts }) } }, 'Place it here'),
       ),
     )
     root.append(panel)
@@ -42,7 +58,7 @@ export function openCarver(root: HTMLElement): Promise<Cut[] | null> {
       const r = size / 2.4
       const cx = canvas.clientWidth / 2
       const cy = canvas.clientHeight / 2 + r * 0.1
-      return { r, cx, cy, ...pumpkinBox(cx, cy, r) }
+      return { r, cx, cy, ...pumpkinBox(cx, cy, r, base) }
     }
 
     canvas.addEventListener('pointerdown', (e) => {
@@ -74,7 +90,12 @@ export function openCarver(root: HTMLElement): Promise<Cut[] | null> {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       ctx.clearRect(0, 0, W, H)
       const g = geom()
-      drawCarvedPumpkin(ctx, g.cx, g.cy, g.r, cuts, t)
+      drawCarvedPumpkin(ctx, g.cx, g.cy, g.r, cuts, t, base)
+      for (const p of picks) {
+        const c = p.querySelector('canvas')!.getContext('2d')!
+        c.clearRect(0, 0, 64, 64)
+        drawPumpkinBody(c, 32, 36, 22, p.dataset.id as PumpkinBaseId)
+      }
       if (pen.length) {
         ctx.strokeStyle = '#2a0f00'
         ctx.lineWidth = 3
