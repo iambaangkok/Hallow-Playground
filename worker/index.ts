@@ -18,7 +18,14 @@ interface Env {
   ASSETS: Fetcher
   PLAYGROUND: DurableObjectNamespace<PlaygroundRoom>
   DIRECTORY: DurableObjectNamespace<Directory>
+  CLOSED?: string
 }
+
+const closedPage = () =>
+  new Response('<!doctype html><meta name="viewport" content="width=device-width"><title>Playground</title><body style="background:#161616;color:#fff;font:600 20px system-ui;display:grid;place-items:center;height:100vh;margin:0">The playground is closed for now.</body>', {
+    status: 503,
+    headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' },
+  })
 
 const API = '/playground/api'
 const OLD_BASE = '/hallow-playground'
@@ -207,6 +214,7 @@ const json = (data: unknown, status = 200) =>
 export default {
   async fetch(req: Request, env: Env): Promise<Response> {
     const url = new URL(req.url)
+    if (env.CLOSED === '1') return closedPage()
     if (url.pathname.startsWith(OLD_BASE)) {
       url.pathname = `/playground${url.pathname.slice(OLD_BASE.length)}`
       return Response.redirect(url.toString(), 301)

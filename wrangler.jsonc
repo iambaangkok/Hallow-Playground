@@ -15,11 +15,13 @@
     { "pattern": "iambaangkok.dev/playground*", "zone_name": "iambaangkok.dev" },
     { "pattern": "iambaangkok.dev/hallow-playground*", "zone_name": "iambaangkok.dev" }
   ],
+  // "1" serves a closed page on every path and refuses all API and WebSocket traffic. Set to "0" to reopen.
+  "vars": { "CLOSED": "1" },
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
-    "run_worker_first": ["/playground/api/*", "/hallow-playground*"]
+    "run_worker_first": true
   },
   "durable_objects": {
     "bindings": [
