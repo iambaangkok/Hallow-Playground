@@ -52,7 +52,7 @@ export function showLobby(root: HTMLElement, initial: Profile, presetCode: strin
         const c = ROSTER.find((r) => r.id === card.dataset.id)!
         const picked = c.id === profile.character
         ctx.clearRect(0, 0, 120, 130)
-        drawCharacter(ctx, 60, 118, c.id, c, { moving: picked, phase: t * 9, facing: 1 }, t, 90)
+        drawCharacter(ctx, 60, 118, c.id, c, { moving: picked, phase: t * 9, facing: 1 }, 90)
       }
       raf = requestAnimationFrame(animate)
     }

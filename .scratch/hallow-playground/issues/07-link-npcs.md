@@ -15,4 +15,4 @@ NPCs with short fixed dialogue that end by offering the owner's Twitter and pers
 
 ## Answer
 
-Kaw the Crow links to X, Moon Witch links to the website. Bonesy the Gatekeeper shares the invite link and flips Public/Private. Tapping an NPC walks you over and opens the dialogue.
+NPC 3 links to X, NPC 4 links to the website, NPC 1 shares the invite link and flips Public/Private. Names, lines, and art are placeholders for the owner. Tapping an NPC walks you over and opens the dialogue.

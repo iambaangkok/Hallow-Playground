@@ -104,7 +104,7 @@ export function startGame(root: HTMLElement, canvas: HTMLCanvasElement, profile:
       h(
         'div',
         { class: 'dialog' },
-        h('h3', {}, 'The Gate'),
+        h('h3', {}, 'Playground'),
         h('p', {}, 'Playground code'),
         h('p', { class: 'big-code' }, code),
         h('p', { class: 'muted' }, isPublic ? 'Anyone can find this playground in the lobby.' : 'Only people with the code or link can come in.'),
@@ -248,7 +248,6 @@ export function startGame(root: HTMLElement, canvas: HTMLCanvasElement, profile:
   const frame = (now: number) => {
     const dt = Math.min(0.05, (now - last) / 1000)
     last = now
-    const t = now / 1000
 
     for (const p of players.values()) advance(p, dt)
     const mine = players.get(me)
@@ -277,31 +276,31 @@ export function startGame(root: HTMLElement, canvas: HTMLCanvasElement, profile:
     cam.y = halfH * 2 >= MAP_H ? MAP_H / 2 : Math.min(MAP_H - halfH, Math.max(halfH, cam.y))
 
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-    ctx.fillStyle = '#0d0912'
+    ctx.fillStyle = '#0a0a0a'
     ctx.fillRect(0, 0, W, H)
     ctx.setTransform(dpr * cam.zoom, 0, 0, dpr * cam.zoom, dpr * (W / 2 - cam.x * cam.zoom), dpr * (H / 2 - cam.y * cam.zoom))
-    drawMap(ctx, t)
+    drawMap(ctx)
 
     type Drawable = { y: number; draw: () => void }
     const scene: Drawable[] = []
-    for (const pk of pumpkins) scene.push({ y: pk.y, draw: () => drawCarvedPumpkin(ctx, pk.x, pk.y - PUMPKIN_R * 0.85, PUMPKIN_R, pk.cuts, t, pk.base ?? DEFAULT_BASE) })
+    for (const pk of pumpkins) scene.push({ y: pk.y, draw: () => drawCarvedPumpkin(ctx, pk.x, pk.y - PUMPKIN_R * 0.85, PUMPKIN_R, pk.cuts, pk.base ?? DEFAULT_BASE) })
     for (const n of npcs)
       scene.push({
         y: n.y,
         draw: () => {
-          drawCharacter(ctx, n.x, n.y, n.sprite, n, n.pose, t)
+          drawCharacter(ctx, n.x, n.y, n.sprite, n, n.pose)
         },
       })
     for (const p of players.values())
       scene.push({
         y: p.y,
         draw: () => {
-          drawCharacter(ctx, p.x, p.y, p.character, characterDef(p.character), p.pose, t)
+          drawCharacter(ctx, p.x, p.y, p.character, characterDef(p.character), p.pose)
         },
       })
     scene.sort((a, b) => a.y - b.y).forEach((d) => d.draw())
-    for (const n of npcs) drawLabel(ctx, n.x, n.y + 26, n.name, '#ffd27a')
-    for (const p of players.values()) drawLabel(ctx, p.x, p.y + 26, p.name, p.id === me ? '#b8f5c4' : '#fff6e8')
+    for (const n of npcs) drawLabel(ctx, n.x, n.y + 26, n.name)
+    for (const p of players.values()) drawLabel(ctx, p.x, p.y + 26, p.id === me ? `${p.name} (you)` : p.name)
 
     for (const p of players.values()) {
       if (!p.bubble) continue
@@ -311,19 +310,12 @@ export function startGame(root: HTMLElement, canvas: HTMLCanvasElement, profile:
     }
 
     if (mine && mine.pose.moving) {
-      ctx.strokeStyle = 'rgba(255,240,200,0.5)'
+      ctx.strokeStyle = '#ffffff'
       ctx.lineWidth = 3
       ctx.beginPath()
       ctx.ellipse(mine.tx, mine.ty, 18, 8, 0, 0, Math.PI * 2)
       ctx.stroke()
     }
-
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-    const vignette = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.35, W / 2, H / 2, Math.max(W, H) * 0.75)
-    vignette.addColorStop(0, 'rgba(10,5,20,0)')
-    vignette.addColorStop(1, 'rgba(10,5,20,0.55)')
-    ctx.fillStyle = vignette
-    ctx.fillRect(0, 0, W, H)
 
     requestAnimationFrame(frame)
   }

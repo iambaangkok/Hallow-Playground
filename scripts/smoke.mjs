@@ -31,13 +31,13 @@ assert((await fetch(`${base}/playgrounds/ZZZZZ`)).status === 404, 'unknown code 
 
 const a = client(created.code, 'a')
 await a.open
-a.send({ t: 'join', name: 'Baangkok', character: 'ghost' })
+a.send({ t: 'join', name: 'Baangkok', character: 'character-1' })
 const wa = await a.next((m) => m.t === 'welcome')
 assert(wa.code === created.code && wa.players.length === 1, 'first player welcomed alone')
 
 const b = client(created.code, 'b')
 await b.open
-b.send({ t: 'join', name: 'Her', character: 'cat' })
+b.send({ t: 'join', name: 'Her', character: 'character-2' })
 const wb = await b.next((m) => m.t === 'welcome')
 assert(wb.players.length === 2, 'second player sees both')
 await a.next((m) => m.t === 'joined' && m.player.name === 'Her')
@@ -53,7 +53,7 @@ assert(walk.id === wb.you, 'walk relayed')
 a.send({ t: 'say', text: 'boo' })
 assert((await b.next((m) => m.t === 'say')).text === 'boo', 'say relayed')
 
-a.send({ t: 'place', base: 'tall', x: 900, y: 900, cuts: [[{ x: 0.3, y: 0.3 }, { x: 0.4, y: 0.3 }, { x: 0.35, y: 0.4 }]] })
+a.send({ t: 'place', base: 'base-2', x: 900, y: 900, cuts: [[{ x: 0.3, y: 0.3 }, { x: 0.4, y: 0.3 }, { x: 0.35, y: 0.4 }]] })
 assert((await b.next((m) => m.t === 'placed')).pumpkin.cuts.length === 1, 'pumpkin placed and relayed')
 
 b.ws.close()
@@ -64,7 +64,7 @@ await new Promise((r) => setTimeout(r, 300))
 
 const c = client(created.code, 'c')
 await c.open
-c.send({ t: 'join', name: 'Later', character: 'bat' })
+c.send({ t: 'join', name: 'Later', character: 'character-3' })
 const wc = await c.next((m) => m.t === 'welcome')
 assert(wc.pumpkins.length === 1, 'pumpkin persists after everyone left')
 c.ws.close()

@@ -1,5 +1,9 @@
 # halloween-playground
 
+## Creative direction belongs to the owner
+
+Never invent character names, character types, NPC names or dialogue, place names, scenery, themes, colors, or art. Use numbered placeholders (`Character 1`, `NPC 1`, `House 1`, `[NPC 1 line]`) and a static white wireframe on a dark grid until the owner supplies the real thing. Functional UI text (buttons, hints, errors) is fine.
+
 ## Agent skills
 
 ### Issue tracker
@@ -27,4 +31,4 @@ Worker script plus static assets on route `www.iambaangkok.dev/hallow-playground
 
 ## Art
 
-Drop PNGs in `public/`: `characters/<id>.png` for each Roster id in `src/client/roster.ts`, `characters/npc-<id>.png` for NPCs, `map.png` (2400x1600), `pumpkins/<id>.png` for each Pumpkin Base in `src/shared/pumpkins.ts`. Missing files fall back to placeholders.
+Drop PNGs in `public/`: `characters/<id>.png` for each Roster id in `src/client/roster.ts` and each NPC `sprite` in `src/client/npcs.ts`, `map.png` (2400x1600), `pumpkins/<id>.png` for each Pumpkin Base in `src/shared/pumpkins.ts`. Missing files fall back to placeholders.

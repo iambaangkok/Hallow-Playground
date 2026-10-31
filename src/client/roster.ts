@@ -2,12 +2,12 @@ export type CharacterDef = { id: string; label: string; color: string; accent: s
 
 /** The Roster. Drop `public/characters/<id>.png` to replace a placeholder with a drawing. */
 export const ROSTER: CharacterDef[] = [
-  { id: 'ghost', label: 'Ghost', color: '#f1ecff', accent: '#2a1f3d' },
-  { id: 'cat', label: 'Black Cat', color: '#2b2238', accent: '#ffd23f' },
-  { id: 'pumpkin', label: 'Pumpkin', color: '#ff8a1f', accent: '#3b1d00' },
-  { id: 'witch', label: 'Witch', color: '#7bd389', accent: '#2a1f3d' },
-  { id: 'skull', label: 'Skull', color: '#e9e2d0', accent: '#1a1424' },
-  { id: 'bat', label: 'Bat', color: '#8a5cf6', accent: '#ffe9f0' },
+  { id: 'character-1', label: 'Character 1', color: '#161616', accent: '#ffffff' },
+  { id: 'character-2', label: 'Character 2', color: '#161616', accent: '#ffffff' },
+  { id: 'character-3', label: 'Character 3', color: '#161616', accent: '#ffffff' },
+  { id: 'character-4', label: 'Character 4', color: '#161616', accent: '#ffffff' },
+  { id: 'character-5', label: 'Character 5', color: '#161616', accent: '#ffffff' },
+  { id: 'character-6', label: 'Character 6', color: '#161616', accent: '#ffffff' },
 ]
 
 export const characterDef = (id: string): CharacterDef => ROSTER.find((c) => c.id === id) ?? ROSTER[0]

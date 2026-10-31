@@ -17,4 +17,4 @@ Which silly Halloween minigame ships first, and how do two Players play it toget
 
 ## Answer
 
-Shipped the default: Old Gourd opens the pen-tool carver; the Pumpkin is placed at your feet and stays forever. The player first picks a Pumpkin Base from a fixed set that ships with the game (`src/shared/pumpkins.ts`, art at `public/pumpkins/<id>.png`). No uploads. Cuts follow the chosen base drawing's bounds.
+Shipped the default: NPC 2 opens the pen-tool carver; the Pumpkin is placed at your feet and stays forever. The player first picks a Pumpkin Base from a fixed set that ships with the game (`src/shared/pumpkins.ts`, art at `public/pumpkins/<id>.png`). No uploads. Cuts follow the chosen base drawing's bounds.
