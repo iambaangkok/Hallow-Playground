@@ -20,6 +20,9 @@ importers:
       playwright-core:
         specifier: 1.60.0
         version: 1.60.0
+      sharp:
+        specifier: ^0.35.5
+        version: 0.35.5
       typescript:
         specifier: ^7.0.2
         version: 7.0.2

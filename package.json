@@ -5,7 +5,8 @@
     "dev": "mkdir -p dist/playground && concurrently -k -n web,worker -c magenta,cyan \"vite\" \"wrangler dev --port 8790\"",
     "build": "tsc -p tsconfig.json --noEmit && tsc -p worker/tsconfig.json --noEmit && vite build && cp dist/playground/index.html dist/index.html",
     "lint": "oxlint",
-    "deploy": "pnpm build && wrangler deploy"
+    "deploy": "pnpm build && wrangler deploy",
+    "sprites": "node scripts/sprites.mjs"
   },
   "type": "module",
   "devDependencies": {
@@ -13,6 +14,7 @@
     "concurrently": "^10.0.6",
     "oxlint": "^1.90.0",
     "playwright-core": "1.60.0",
+    "sharp": "^0.35.5",
     "typescript": "^7.0.2",
     "vite": "^8.3.5",
     "wrangler": "^4.156.0"

@@ -3,3 +3,7 @@ dist
 .wrangler
 .dev.vars
 *.log
+
+# Phone photos carry GPS EXIF; only the cut sprites are committed.
+assets/raw/
+.scratch/sprites/

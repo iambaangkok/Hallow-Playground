@@ -1,0 +1,15 @@
+{
+  "defaults": { "out": "assets/sprites", "maxSize": 512 },
+  "sprites": [
+    { "id": "meraki", "name": "Meraki", "caption": "labor of love", "dir": "characters", "photo": "IMG_20261031_163922.jpg", "box": [630, 620, 960, 880] },
+    { "id": "kiki", "name": "Kiki", "dir": "characters", "photo": "IMG_20261031_163922.jpg", "box": [690, 1880, 910, 1330], "fill": { "close": 90 } },
+    { "id": "sisu", "name": "Sisu", "caption": "showing courage in the face of adversity", "dir": "characters", "photo": "IMG_20261031_163932.jpg", "box": [830, 420, 870, 1100] },
+    { "id": "death", "name": "Death", "dir": "characters", "photo": "IMG_20261031_163932.jpg", "box": [540, 2320, 1040, 980] },
+    { "id": "weltschmerz", "name": "Weltschmerz", "caption": "weary sadness at the gap between the world as it is and the world as you wish it were", "dir": "characters", "photo": "IMG_20261031_163937.jpg", "box": [680, 520, 950, 830], "threshold": [12, 34], "fill": { "close": 20 } },
+    { "id": "jack-skellington", "name": "Jack Skellington", "dir": "characters", "photo": "IMG_20261031_163937.jpg", "box": [690, 2430, 810, 880] },
+    { "id": "night-stalker", "name": "Night Stalker", "dir": "characters", "photo": "IMG_20261031_163945.jpg", "box": [520, 1360, 1190, 1075] },
+    { "id": "salaryman-zombie", "name": "Salaryman Zombie", "dir": "characters", "photo": "IMG_20261031_163949.jpg", "box": [450, 1430, 770, 1110] },
+    { "id": "ghost", "name": "Ghost", "dir": "characters", "photo": "IMG_20261031_163954.jpg", "box": [1150, 940, 580, 680], "threshold": [14, 40] },
+    { "id": "pumpkin", "name": "Pumpkin", "dir": "pumpkins", "photo": "IMG_20261031_163954.jpg", "box": [180, 1030, 650, 590] }
+  ]
+}

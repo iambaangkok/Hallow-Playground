@@ -32,3 +32,12 @@ Worker script plus static assets on route `iambaangkok.dev/playground*` ([wrangl
 ## Art
 
 Drop PNGs in `public/`: `characters/<id>.png` for each Roster id in `src/client/roster.ts` and each NPC `sprite` in `src/client/npcs.ts`, `map.png` (2400x1600), `pumpkins/<id>.png` for each Pumpkin Base in `src/shared/pumpkins.ts`. Missing files fall back to placeholders.
+
+### Cutting sprites from photos
+
+Photos of drawings go in `assets/raw/` (gitignored, they carry GPS EXIF). `assets/sprites.json` lists each sprite: `id`, the owner's `name` and `caption` as written on the page, `photo`, `box` [x,y,w,h] in full-res pixels, and optional `threshold` [lo,hi], `fill` (`holes` default, `{ "close": r }` for open shapes, `hull`, `none`), `minSpeck`, `maxSize`.
+
+- `pnpm sprites look <photo> [--box x,y,w,h]`: preview with a coordinate grid. Read the printed image to pick boxes.
+- `pnpm sprites detect <photo>`: numbered boxes around ink blobs.
+- `pnpm sprites cut [id...]`: writes transparent PNGs to `assets/sprites/<dir>/<id>.png` and a review sheet at `.scratch/sprites/sheet.png`. Keep labels out of the box.
+
