@@ -27,7 +27,7 @@ Single-context: one `CONTEXT.md` plus `docs/adr/` at the repo root. See `docs/ag
 
 ## Deploy notes
 
-Worker script plus static assets on route `www.iambaangkok.dev/hallow-playground*` ([wrangler.jsonc](wrangler.jsonc)). The route keeps the path prefix, so Vite `base` is `/hallow-playground/` and the build lands in `dist/hallow-playground/` while assets serve from `dist/`. Change one, change the other. Cloudflare builds from `master`.
+Worker script plus static assets on route `iambaangkok.dev/hallow-playground*` ([wrangler.jsonc](wrangler.jsonc)). The route keeps the path prefix, so Vite `base` is `/hallow-playground/` and the build lands in `dist/hallow-playground/` while assets serve from `dist/`. Change one, change the other. Cloudflare builds from `master`.
 
 ## Art
 

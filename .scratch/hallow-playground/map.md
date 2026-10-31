@@ -4,13 +4,13 @@ Label: wayfinder:map
 
 ## Destination
 
-Hallow Playground is live at **https://www.iambaangkok.dev/hallow-playground/** by **31 Oct 2026, 19:00 ICT**. Two Players in different countries (one on a tablet) create or join the same Playground from the Lobby, Bob around the Map together in real time, Say things to each other, talk to the Link NPCs, and play at least one silly Halloween minigame.
+Hallow Playground is live at **https://iambaangkok.dev/hallow-playground/** by **31 Oct 2026, 19:00 ICT**. Two Players in different countries (one on a tablet) create or join the same Playground from the Lobby, Bob around the Map together in real time, Say things to each other, talk to the Link NPCs, and play at least one silly Halloween minigame.
 
 ## Notes
 
 - **Execution is in scope.** This overrides wayfinder's plan-only default. Tickets build and ship. Hard deadline, so prefer the smallest thing that works.
 - Domain language lives in [CONTEXT.md](../../CONTEXT.md). Read it first.
-- Hosting mirrors `../happy25`: pnpm, Vite, TypeScript, oxlint, a Cloudflare Worker on route `www.iambaangkok.dev/hallow-playground*`, with Vite `base` `/hallow-playground/`. Unlike hello25, it has a Worker script plus Durable Objects (one per Playground, WebSocket Hibernation API).
+- Hosting mirrors `../happy25`: pnpm, Vite, TypeScript, oxlint, a Cloudflare Worker on route `iambaangkok.dev/hallow-playground*`, with Vite `base` `/hallow-playground/`. Unlike hello25, it has a Worker script plus Durable Objects (one per Playground, WebSocket Hibernation API).
 - Rendering uses HTML canvas. DOM is used only where the canvas can't do the job (text input that needs the mobile keyboard).
 - Input is touch and mouse. Tablet is a primary target.
 - All creative direction (names, characters, NPCs, dialogue, places, art) comes from the owner. Builds use numbered placeholders and a white wireframe.

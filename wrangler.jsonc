@@ -1,5 +1,5 @@
 {
-  // Worker script + static assets, on route www.iambaangkok.dev/hallow-playground*.
+  // Worker script + static assets, on route iambaangkok.dev/hallow-playground*.
   // The route keeps the path prefix, so Vite `base` is /hallow-playground/ and the build lands in
   // dist/hallow-playground/ while assets serve from dist/. Change one, change the other.
   // `name` must match the Worker name in the Cloudflare dashboard.
@@ -9,7 +9,7 @@
   "compatibility_date": "2026-10-01",
   "workers_dev": false,
   "routes": [
-    { "pattern": "www.iambaangkok.dev/hallow-playground*", "zone_name": "iambaangkok.dev" }
+    { "pattern": "iambaangkok.dev/hallow-playground*", "zone_name": "iambaangkok.dev" }
   ],
   "assets": {
     "directory": "./dist",
