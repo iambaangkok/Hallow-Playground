@@ -1,6 +1,6 @@
 import { chromium } from 'playwright-core'
 
-const URL = process.argv[2] ?? 'http://localhost:5173/hallow-playground/'
+const URL = process.argv[2] ?? 'http://localhost:5173/playground/'
 const OUT = '/tmp/hp-e2e'
 const assert = (ok, what) => {
   if (!ok) throw new Error(`FAIL: ${what}`)

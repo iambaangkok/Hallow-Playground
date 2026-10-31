@@ -1,4 +1,4 @@
-# halloween-playground
+# playground
 
 ## Creative direction belongs to the owner
 
@@ -20,14 +20,14 @@ Single-context: one `CONTEXT.md` plus `docs/adr/` at the repo root. See `docs/ag
 
 ## Commands
 
-- `pnpm dev`: Vite at http://localhost:5173/hallow-playground/ plus `wrangler dev` on 8790 (8787 is used by another project).
-- `pnpm build`: typecheck client and worker, then `vite build` into `dist/hallow-playground/`.
+- `pnpm dev`: Vite at http://localhost:5173/playground/ plus `wrangler dev` on 8790 (8787 is used by another project).
+- `pnpm build`: typecheck client and worker, then `vite build` into `dist/playground/`.
 - `node scripts/smoke.mjs`: server protocol check against the running worker.
 - `node scripts/e2e.mjs`: two-browser check (desktop + touch tablet) against `pnpm dev`.
 
 ## Deploy notes
 
-Worker script plus static assets on route `iambaangkok.dev/hallow-playground*` ([wrangler.jsonc](wrangler.jsonc)). The route keeps the path prefix, so Vite `base` is `/hallow-playground/` and the build lands in `dist/hallow-playground/` while assets serve from `dist/`. Change one, change the other. Cloudflare builds from `master`.
+Worker script plus static assets on route `iambaangkok.dev/playground*` ([wrangler.jsonc](wrangler.jsonc)). The route keeps the path prefix, so Vite `base` is `/playground/` and the build lands in `dist/playground/` while assets serve from `dist/`. Change one, change the other. Cloudflare builds from `master`.
 
 ## Art
 

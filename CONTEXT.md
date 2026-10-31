@@ -1,6 +1,6 @@
-# Hallow Playground
+# Playground
 
-A shared, real-time Halloween map that a small group of people walk around together, visiting places, talking to NPCs, and playing silly minigames.
+A shared, real-time map that a small group of people walk around together, visiting places, talking to NPCs, and playing silly minigames.
 
 ## Language
 

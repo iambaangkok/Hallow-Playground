@@ -1,23 +1,25 @@
 {
-  // Worker script + static assets, on route iambaangkok.dev/hallow-playground*.
-  // The route keeps the path prefix, so Vite `base` is /hallow-playground/ and the build lands in
-  // dist/hallow-playground/ while assets serve from dist/. Change one, change the other.
+  // Worker script + static assets, on route iambaangkok.dev/playground*.
+  // The route keeps the path prefix, so Vite `base` is /playground/ and the build lands in
+  // dist/playground/ while assets serve from dist/. Change one, change the other.
   // The build also copies index.html to dist/ root: SPA fallback serves /index.html, which is how
-  // invite links like /hallow-playground/ABCDE reach the app.
-  // `name` must match the Worker name in the Cloudflare dashboard.
+  // invite links like /playground/ABCDE reach the app.
+  // `name` must match the Worker name in the Cloudflare dashboard, and renaming it would orphan the
+  // Durable Objects that hold every Playground's Pumpkins. The old /hallow-playground path redirects.
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "hallow-playground",
   "main": "worker/index.ts",
   "compatibility_date": "2026-10-01",
   "workers_dev": false,
   "routes": [
+    { "pattern": "iambaangkok.dev/playground*", "zone_name": "iambaangkok.dev" },
     { "pattern": "iambaangkok.dev/hallow-playground*", "zone_name": "iambaangkok.dev" }
   ],
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
-    "run_worker_first": ["/hallow-playground/api/*"]
+    "run_worker_first": ["/playground/api/*", "/hallow-playground*"]
   },
   "durable_objects": {
     "bindings": [

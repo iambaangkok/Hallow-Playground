@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite'
 
-const BASE = '/hallow-playground/'
+const BASE = '/playground/'
 
 export default defineConfig({
   base: BASE,

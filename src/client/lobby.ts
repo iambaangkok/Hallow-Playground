@@ -132,7 +132,7 @@ export function showLobby(root: HTMLElement, initial: Profile, presetCode: strin
     const panel = h(
       'div',
       { class: 'lobby' },
-      h('div', { class: 'lobby-inner' }, h('h1', {}, 'Hallow Playground'), h('h2', {}, 'Pick who you are'), roster, nameInput, actions, status),
+      h('div', { class: 'lobby-inner' }, h('h1', {}, 'Playground'), h('h2', {}, 'Pick who you are'), roster, nameInput, actions, status),
     )
     root.append(panel)
   })

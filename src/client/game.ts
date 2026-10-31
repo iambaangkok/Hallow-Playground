@@ -98,7 +98,7 @@ export function startGame(root: HTMLElement, canvas: HTMLCanvasElement, profile:
       on: {
         click: async () => {
           const url = shareUrl()
-          if (navigator.share) await navigator.share({ title: 'Hallow Playground', url }).catch(() => {})
+          if (navigator.share) await navigator.share({ title: 'Playground', url }).catch(() => {})
           else {
             await navigator.clipboard?.writeText(url)
             copyBtn.textContent = 'Link copied!'

@@ -1,4 +1,4 @@
-const base = process.argv[2] ?? 'http://localhost:8790/hallow-playground/api'
+const base = process.argv[2] ?? 'http://localhost:8790/playground/api'
 const assert = (ok, what) => {
   if (!ok) throw new Error(`FAIL: ${what}`)
   console.log(`ok: ${what}`)

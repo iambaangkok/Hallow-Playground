@@ -20,7 +20,8 @@ interface Env {
   DIRECTORY: DurableObjectNamespace<Directory>
 }
 
-const API = '/hallow-playground/api'
+const API = '/playground/api'
+const OLD_BASE = '/hallow-playground'
 
 type Walk = { fx: number; fy: number; tx: number; ty: number; at: number }
 type Seat = { id: string; name: string; character: string; walk: Walk }
@@ -206,6 +207,10 @@ const json = (data: unknown, status = 200) =>
 export default {
   async fetch(req: Request, env: Env): Promise<Response> {
     const url = new URL(req.url)
+    if (url.pathname.startsWith(OLD_BASE)) {
+      url.pathname = `/playground${url.pathname.slice(OLD_BASE.length)}`
+      return Response.redirect(url.toString(), 301)
+    }
     if (!url.pathname.startsWith(API)) return env.ASSETS.fetch(req)
     const parts = url.pathname.slice(API.length).split('/').filter(Boolean)
 
