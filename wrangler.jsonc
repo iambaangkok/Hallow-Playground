@@ -1,0 +1,27 @@
+{
+  // Worker script + static assets, on route www.iambaangkok.dev/hallow-playground*.
+  // The route keeps the path prefix, so Vite `base` is /hallow-playground/ and the build lands in
+  // dist/hallow-playground/ while assets serve from dist/. Change one, change the other.
+  // `name` must match the Worker name in the Cloudflare dashboard.
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "hallow-playground",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": false,
+  "routes": [
+    { "pattern": "www.iambaangkok.dev/hallow-playground*", "zone_name": "iambaangkok.dev" }
+  ],
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/hallow-playground/api/*"]
+  },
+  "durable_objects": {
+    "bindings": [
+      { "name": "PLAYGROUND", "class_name": "PlaygroundRoom" },
+      { "name": "DIRECTORY", "class_name": "Directory" }
+    ]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["PlaygroundRoom", "Directory"] }]
+}

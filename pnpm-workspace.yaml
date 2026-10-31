@@ -1,0 +1,11 @@
+# Single-app repo. Cloudflare builds run pnpm 10, which needs `packages:` here and reads
+# `onlyBuiltDependencies`; pnpm 11+ reads `allowBuilds`.
+packages:
+  - .
+
+allowBuilds:
+  esbuild: true
+  workerd: true
+onlyBuiltDependencies:
+  - esbuild
+  - workerd
